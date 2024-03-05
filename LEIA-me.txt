@@ -1,1 +1,55 @@
 Neste repositório deverá ser feito o UpLoad da atividade solicitada pelo docente
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[] NumInt = new int[5];
+        int i, j, aux;
+
+        // Entrada de 5 números inteiros
+        for (i = 0; i < 5; i++)
+        {
+            Console.Write("Digite um número inteiro positivo: ");
+            string input = Console.ReadLine();
+
+            if (input != null)
+            {
+                if (int.TryParse(input, out numeroInteiros[i]))
+                {
+                    // Entrada válida, continue para o próximo número
+                    continue;
+                }
+            }
+
+            // Se chegou aqui, a entrada não é válida
+            Console.WriteLine("Entrada inválida. Tente novamente.");
+            i--; // Decrementar para repetir a iteração atual
+        }
+
+        // Ordenação dos números em ordem crescente
+        for (i = 0; i < 5; i++)
+        {
+            for (j = i + 1; j < 5; j++)
+            {
+                if (numeroInteiros[i] > numeroInteiros[j])
+                {
+                    aux = numeroInteiros[i];
+                    numeroInteiros[i] = numeroInteiros[j];
+                    numeroInteiros[j] = aux;
+                }
+            }
+        }
+
+        // Mostrar os números em ordem crescente
+        Console.Write("Números em ordem crescente: ");
+        for (i = 0; i < 5; i++)
+        {
+            Console.Write($"{numeroInteiros[i]} ");
+        }
+        Console.WriteLine();
+    }
+}
+
