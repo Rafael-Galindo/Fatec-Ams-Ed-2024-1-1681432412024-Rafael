@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Definição da estrutura do produto
+typedef struct Produto {
+    int codigo;
+    char nome[50];
+    int quantidade;
+    struct Produto *prox;
+} Produto;
+
+// Função para criar um novo produto
+Produto* criarProduto(int codigo, char nome[], int quantidade) {
+    Produto *novoProduto = (Produto*)malloc(sizeof(Produto));
+    if (novoProduto == NULL) {
+        printf("Erro ao alocar memória para o produto!\n");
+        exit(1);
+    }
+    novoProduto->codigo = codigo;
+    strcpy(novoProduto->nome, nome);
+    novoProduto->quantidade = quantidade;
+    novoProduto->prox = NULL;
+    return novoProduto;
+}
+
+// Função para inserir um novo produto na lista ligada
+void inserirProduto(Produto **estoque, Produto *novoProduto) {
+    if (*estoque == NULL) {
+        *estoque = novoProduto;
+    } else {
+        Produto *temp = *estoque;
+        while (temp->prox != NULL) {
+            temp = temp->prox;
+        }
+        temp->prox = novoProduto;
+    }
+    printf("Produto cadastrado com sucesso!\n");
+}
+
+// Função para buscar um produto pelo código
+Produto* buscarProduto(Produto *estoque, int codigo) {
+    Produto *temp = estoque;
+    while (temp != NULL) {
+        if (temp->codigo == codigo) {
+            return temp;
+        }
+        temp = temp->prox;
+    }
+    return NULL; // Produto não encontrado
+}
+
+// Função para dar baixa no estoque de um produto
+void darBaixaEstoque(Produto *produto, int quantidade) {
+    if (produto == NULL) {
+        printf("Produto não encontrado!\n");
+        return;
+    }
+    if (produto->quantidade < quantidade) {
+        printf("Quantidade indisponível no estoque!\n");
+    } else {
+        produto->quantidade -= quantidade;
+        printf("Baixa no estoque realizada com sucesso!\n");
+    }
+}
+
+// Função principal
+int main() {
+    Produto *estoque = NULL;
+    int opcao, codigo, quantidade;
+    char nome[50];
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Cadastrar Produto\n");
+        printf("2 - Buscar Produto\n");
+        printf("3 - Dar Baixa no Estoque\n");
+        printf("0 - Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("\nInforme o código do produto: ");
+                scanf("%d", &codigo);
+                printf("Informe o nome do produto: ");
+                scanf("%s", nome);
+                printf("Informe a quantidade em estoque: ");
+                scanf("%d", &quantidade);
+                inserirProduto(&estoque, criarProduto(codigo, nome, quantidade));
+                break;
+            case 2:
+                printf("\nInforme o codigo do produto a ser buscado: ");
+                scanf("%d", &codigo);
+                Produto *produtoBuscado = buscarProduto(estoque, codigo);
+                if (produtoBuscado != NULL) {
+                    printf("Produto encontrado:\n");
+                    printf("Codigo: %d\n", produtoBuscado->codigo);
+                    printf("Nome: %s\n", produtoBuscado->nome);
+                    printf("Quantidade em estoque: %d\n", produtoBuscado->quantidade);
+                } else {
+                    printf("Produto nao encontrado!\n");
+                }
+                break;
+            case 3:
+                printf("\nInforme o código do produto para dar baixa no estoque: ");
+                scanf("%d", &codigo);
+                printf("Informe a quantidade a ser retirada do estoque: ");
+                scanf("%d", &quantidade);
+                Produto *produtoBaixa = buscarProduto(estoque, codigo);
+                darBaixaEstoque(produtoBaixa, quantidade);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção invalida!\n");
+        }
+    } while (opcao != 0);
+
+    // Liberar memória alocada para a lista ligada
+    Produto *temp;
+    while (estoque != NULL) {
+        temp = estoque;
+        estoque = estoque->prox;
+        free(temp);
+    }
+
+    return 0;
+}
